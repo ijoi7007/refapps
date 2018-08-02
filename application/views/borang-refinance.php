@@ -86,6 +86,13 @@ $luas = array(
     'class' => 'form-control',
 );
 
+$bandar = array(
+    'name' => 'bandar',
+    'id' => 'bandar',
+    'value' => set_value('bandar'),
+    'class' => 'form-control',
+);
+
 $market_value = array(
     'name' => 'market_value',
     'id' => 'market_value',
@@ -189,6 +196,16 @@ $market_value = array(
                             </div>
                             <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
                                 <?php echo form_dropdown('objektif', $list_objektif, $selected_objektif, 'class=form-control'); ?>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12 control-label">
+                                <?php echo form_label('Bandar', $bandar['id']); ?>
+                            </div>
+
+                            <div class="col-lg-5 col-md-6 col-sm-6 col-xs-12">
+                                <?php echo form_input($bandar); ?>
                             </div>
                         </div>
 

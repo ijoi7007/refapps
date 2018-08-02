@@ -304,6 +304,7 @@ class Cms extends CI_Controller
         $this->form_validation->set_rules('objektif', 'Objektif Refinance', 'callback_check_dropdown_objektif');
         $this->form_validation->set_rules('prop_info', 'Detail Rumah', 'trim|required');
         $this->form_validation->set_rules('luas', 'Luas', 'trim|required');
+        $this->form_validation->set_rules('bandar', 'Bandar', 'trim|required');
         $this->form_validation->set_rules('market_value', 'Market Value', 'trim|numeric');
         $this->form_validation->set_rules('bank', 'Bank', 'trim|required');
         $this->form_validation->set_rules('baki_loan', 'Baki Pembiayaan', 'trim|required|numeric');
@@ -324,6 +325,7 @@ class Cms extends CI_Controller
                 'email' => $this->input->post('email'),
                 'objective' => $this->input->post('objektif'),
                 'propinfo' => $this->input->post('prop_info'),
+                'bank' => $this->input->post('bandar'),
                 'bank' => $this->input->post('bank'),
                 'luas' => $this->input->post('luas'),
                 'current_value' => $this->input->post('market_value'),
