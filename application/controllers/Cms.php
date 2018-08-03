@@ -3,6 +3,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Cms extends CI_Controller
 {
+
+    $url = "http://localhost:8888/SuiteCRM/service/v4_1/rest.php";
+
+    $username = "admin";
+    $password = "admin";
+
     function __construct()
     {
         parent::__construct();
@@ -262,6 +268,40 @@ class Cms extends CI_Controller
         }
     }
 
+        //function to make cURL request
+    function call($method, $parameters, $url)
+    {
+        ob_start();
+        $curl_request = curl_init();
+
+        curl_setopt($curl_request, CURLOPT_URL, $url);
+        curl_setopt($curl_request, CURLOPT_POST, 1);
+        curl_setopt($curl_request, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_0);
+        curl_setopt($curl_request, CURLOPT_HEADER, 1);
+        curl_setopt($curl_request, CURLOPT_SSL_VERIFYPEER, 0);
+        curl_setopt($curl_request, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($curl_request, CURLOPT_FOLLOWLOCATION, 0);
+
+        $jsonEncodedData = json_encode($parameters);
+
+        $post = array(
+             "method" => $method,
+             "input_type" => "JSON",
+             "response_type" => "JSON",
+             "rest_data" => $jsonEncodedData
+        );
+
+        curl_setopt($curl_request, CURLOPT_POSTFIELDS, $post);
+        $result = curl_exec($curl_request);
+        curl_close($curl_request);
+
+        $result = explode("\r\n\r\n", $result, 2);
+        $response = json_decode($result[1]);
+        ob_end_flush();
+
+        return $response;
+    }
+
 
     /*
      * borang yang perlu klien isi untuk buat refinance rumah
@@ -342,6 +382,54 @@ class Cms extends CI_Controller
             // if insert return !not_null send email to client n admin
             $this->refinance_model->create_refinance($data_to_db);
 
+
+            // insert to suitecrm
+
+            //login -------------------------------------------- 
+            $login_parameters = array(
+                 "user_auth" => array(
+                      "user_name" => $username,
+                      "password" => md5($password),
+                      "version" => "1"
+                 ),
+                 "application_name" => "RestTest",
+                 "name_value_list" => array(),
+            );
+
+            $login_result = call("login", $login_parameters, $url);
+
+            /*
+            echo "<pre>";
+            print_r($login_result);
+            echo "</pre>";
+            */
+
+            //get session id
+            $session_id = $login_result->id;
+
+            //create contacts ------------------------------------ 
+            $set_entries_parameters = array(
+                 //session id
+                 "session" => $session_id,
+
+                 //The name of the module from which to retrieve records.
+                 "module_name" => "Contacts",
+
+                 //Record attributes
+                 "name_value_list" => array(
+                     array(
+                        //to update a record, you will nee to pass in a record id as commented below
+                        //array("name" => "id", "value" => "912e58c0-73e9-9cb6-c84e-4ff34d62620e"),
+                        array("name" => "last_name", "value" => $this->input->post('nama')),
+                        array("name" => "phone_mobile", "value" => $this->input->post('telefon')),
+                        array("name" => "email1", "value" => $this->input->post('email')),
+                        array("name" => "primary_address_city", "value" => $this->input->post('bandar')),
+                     ),
+                 ),
+            );
+
+            $set_entries_result = call("set_entries", $set_entries_parameters, $url);
+
             // send email to admin
             //_send_mail_notification
 
@@ -363,7 +451,7 @@ class Cms extends CI_Controller
             $message .= 'Detail syarat-syarat Refinance Rumah layari http://www.refinancerumah.com/objektif. <br><br>';
             $message .= 'Sekian,<br><br>RefinanceRumah.com<br><br>';
 
-            $this->_send_mail_notification($email_from, $email_from_name, $email_to, $email_subject, $message);
+            //$this->_send_mail_notification($email_from, $email_from_name, $email_to, $email_subject, $message);
 
             // tamat hantar email kpd klien
 
@@ -398,7 +486,7 @@ class Cms extends CI_Controller
             $message .= '<br><br><br>tamat...<br><br>';
             $message .= 'Sekian,<br><br>RefinanceRumah.com<br><br>';
 
-            $this->_send_mail_notification($email_from, $email_from_name, $email_to, $email_subject, $message);
+            //$this->_send_mail_notification($email_from, $email_from_name, $email_to, $email_subject, $message);
 
             // tamat koding hantar email ke admin.
 
