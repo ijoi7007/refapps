@@ -429,7 +429,8 @@ class Cms extends CI_Controller
                  ),
             );
 
-            $set_entry_result = $this->call("set_entry", $set_entry_parameters, $url);
+            $contact_result = $this->call("set_entry", $set_entry_parameters, $url);
+            $contact_id = $contact_result->id;
 
             //create opportunities ------------------------------------ 
 
@@ -462,7 +463,40 @@ class Cms extends CI_Controller
                  ),
             );
 
-            $set_entry_oppor_result = $this->call("set_entry", $set_entry_oppor_parameters, $url);
+            $oppor_result = $this->call("set_entry", $set_entry_oppor_parameters, $url);
+            $oppor_id = $oppor_result->id;
+
+
+            // create relationship
+
+            $set_relationship_parameters = array(
+                //session id
+                'session' => $session_id,
+
+                //The name of the module.
+                'module_name' => 'Opportunities',
+
+                //The ID of the specified module bean.
+                'module_id' => $oppor_id,
+
+                //The relationship name of the linked field from which to relate records.
+                'link_field_name' => 'contacts',
+
+                //The list of record ids to relate
+                'related_ids' => array(
+                    $contact_id,
+                ),
+
+                //Sets the value for relationship based fields
+                'name_value_list' => array(),
+
+                //Whether or not to delete the relationship. 0:create, 1:delete
+                'delete'=> 0,
+            );
+
+            $relationship_result = $this->call("set_relationship", $set_relationship_parameters, $url);
+
+            var_dump($relationship_result);
 
             // send email to admin
             //_send_mail_notification
