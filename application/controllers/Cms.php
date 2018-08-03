@@ -4,10 +4,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Cms extends CI_Controller
 {
 
-    $url = "http://localhost:8888/SuiteCRM/service/v4_1/rest.php";
 
-    $username = "admin";
-    $password = "admin";
 
     function __construct()
     {
@@ -269,7 +266,7 @@ class Cms extends CI_Controller
     }
 
         //function to make cURL request
-    function call($method, $parameters, $url)
+    public function call($method, $parameters, $url)
     {
         ob_start();
         $curl_request = curl_init();
@@ -385,6 +382,14 @@ class Cms extends CI_Controller
 
             // insert to suitecrm
 
+            $url = "http://localhost:8888/SuiteCRM/service/v4_1/rest.php";
+
+            $username = "admin";
+            $password = "admin";
+
+            // customer id for account
+            $account_name = "69600a87-b715-28a1-3206-5b55222a36fc";
+
             //login -------------------------------------------- 
             $login_parameters = array(
                  "user_auth" => array(
@@ -396,39 +401,68 @@ class Cms extends CI_Controller
                  "name_value_list" => array(),
             );
 
-            $login_result = call("login", $login_parameters, $url);
-
-            /*
-            echo "<pre>";
-            print_r($login_result);
-            echo "</pre>";
-            */
+            $login_result = $this->call("login", $login_parameters, $url);
 
             //get session id
             $session_id = $login_result->id;
 
             //create contacts ------------------------------------ 
-            $set_entries_parameters = array(
+            $set_entry_parameters = array(
                  //session id
                  "session" => $session_id,
 
                  //The name of the module from which to retrieve records.
                  "module_name" => "Contacts",
 
+                 //user, account, assignto
+                 //assigned_user_id
+                 //
+
                  //Record attributes
                  "name_value_list" => array(
-                     array(
-                        //to update a record, you will nee to pass in a record id as commented below
-                        //array("name" => "id", "value" => "912e58c0-73e9-9cb6-c84e-4ff34d62620e"),
-                        array("name" => "last_name", "value" => $this->input->post('nama')),
-                        array("name" => "phone_mobile", "value" => $this->input->post('telefon')),
-                        array("name" => "email1", "value" => $this->input->post('email')),
-                        array("name" => "primary_address_city", "value" => $this->input->post('bandar')),
-                     ),
+            
+                    array("name" => "last_name", "value" => $this->input->post('nama')),
+                    array("name" => "phone_mobile", "value" => $this->input->post('telefon')),
+                    array("name" => "email1", "value" => $this->input->post('email')),
+                    array("name" => "primary_address_city", "value" => $this->input->post('bandar')),
+
                  ),
             );
 
-            $set_entries_result = call("set_entries", $set_entries_parameters, $url);
+            $set_entry_result = $this->call("set_entry", $set_entry_parameters, $url);
+
+            //create opportunities ------------------------------------ 
+
+            $oppor_name = "Refinance " . $this->input->post('nama') . " - " . $this->input->post('bandar');
+            $expected_close_date = date("Y-m-d H:i:s");
+            $stages = "Prospecting";
+            $probabilitiy = "10";
+            $oppor_amount = $this->input->post('market_value');
+
+            $set_entry_oppor_parameters = array(
+                 //session id
+                 "session" => $session_id,
+
+                 //The name of the module from which to retrieve records.
+                 "module_name" => "Opportunities",
+
+                 //user, account, assignto
+                 //assigned_user_id
+                 //
+
+                 //Record attributes
+                 "name_value_list" => array(
+            
+                    array("name" => "name", "value" => $oppor_name),
+                    array("name" => "amount", "value" => $oppor_amount),
+                    array("name" => "sales_stage", "value" => $stages),
+                    array("name" => "probabilitiy", "value" => $probabilitiy),
+                    array("name" => "date_closed", "value" => $expected_close_date),
+
+                 ),
+            );
+
+            $set_entry_oppor_result = $this->call("set_entry", $set_entry_oppor_parameters, $url);
 
             // send email to admin
             //_send_mail_notification
