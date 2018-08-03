@@ -199,6 +199,12 @@ $market_value = array(
                             </div>
                         </div>
 
+                         <div class="page-header">
+                            <h3>
+                                Detail Rumah
+                            </h3>
+                        </div>
+
                         <div class="form-group">
                             <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12 control-label">
                                 <?php echo form_label('Bandar', $bandar['id']); ?>
