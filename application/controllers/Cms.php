@@ -386,7 +386,7 @@ class Cms extends CI_Controller
             $password = $this->config->item('crm_pwd');
 
             // default Accounts and Assigned To
-            $account_name = $this->config->item('account_name');
+            //$account_name = $this->config->item('account_name');
             $assigned_to = $this->config->item('assigned_to');
 
             //login -------------------------------------------- 
@@ -512,8 +512,6 @@ class Cms extends CI_Controller
 
             $relationship_result = $this->call("set_relationship", $set_relationship_parameters, $url);
 
-            var_dump($relationship_result);
-
             // send email to admin
             //_send_mail_notification
 
@@ -535,7 +533,7 @@ class Cms extends CI_Controller
             $message .= 'Detail syarat-syarat Refinance Rumah layari http://www.refinancerumah.com/objektif. <br><br>';
             $message .= 'Sekian,<br><br>RefinanceRumah.com<br><br>';
 
-            //$this->_send_mail_notification($email_from, $email_from_name, $email_to, $email_subject, $message);
+            $this->_send_mail_notification($email_from, $email_from_name, $email_to, $email_subject, $message);
 
             // tamat hantar email kpd klien
 
@@ -570,7 +568,7 @@ class Cms extends CI_Controller
             $message .= '<br><br><br>tamat...<br><br>';
             $message .= 'Sekian,<br><br>RefinanceRumah.com<br><br>';
 
-            //$this->_send_mail_notification($email_from, $email_from_name, $email_to, $email_subject, $message);
+            $this->_send_mail_notification($email_from, $email_from_name, $email_to, $email_subject, $message);
 
             // tamat koding hantar email ke admin.
 
