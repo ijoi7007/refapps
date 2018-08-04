@@ -527,3 +527,25 @@ $config['rewrite_short_tags'] = FALSE;
 $config['proxy_ips'] = '';
 
 $config['sess_save_path'] = sys_get_temp_dir();
+
+// crm connection
+
+//local setting
+/*
+$config['crm_url'] = "http://localhost:8888/SuiteCRM/service/v4_1/rest.php";
+$config['crm_user'] = "admin";
+$config['crm_pwd'] = "admin";
+
+$config['account_name'] = "69600a87-b715-28a1-3206-5b55222a36fc";
+$config['assigned_to']  = "1";
+*/
+
+//production setting
+
+//local setting
+
+
+$config['crm_url'] = "http://crm.refinancerumah.com/service/v4_1/rest.php";
+$config['crm_user'] = "zulgoadmin";
+$config['crm_pwd'] = "Y@n0O1701.#";
+$config['assigned_to']  = "1";

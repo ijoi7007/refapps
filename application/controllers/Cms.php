@@ -4,8 +4,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Cms extends CI_Controller
 {
 
-
-
     function __construct()
     {
         parent::__construct();
@@ -382,14 +380,14 @@ class Cms extends CI_Controller
 
             // insert to suitecrm
 
-            $url = "http://localhost:8888/SuiteCRM/service/v4_1/rest.php";
+            // load from config file
+            $url = $this->config->item('crm_url');
+            $username = $this->config->item('crm_user');
+            $password = $this->config->item('crm_pwd');
 
-            $username = "admin";
-            $password = "admin";
-
-            // customer id for account
-            $account_name = "69600a87-b715-28a1-3206-5b55222a36fc";
-            $assigned_to = "1";
+            // default Accounts and Assigned To
+            $account_name = $this->config->item('account_name');
+            $assigned_to = $this->config->item('assigned_to');
 
             //login -------------------------------------------- 
             $login_parameters = array(
