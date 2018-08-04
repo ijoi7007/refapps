@@ -389,6 +389,7 @@ class Cms extends CI_Controller
 
             // customer id for account
             $account_name = "69600a87-b715-28a1-3206-5b55222a36fc";
+            $assigned_to = "1";
 
             //login -------------------------------------------- 
             $login_parameters = array(
@@ -421,11 +422,11 @@ class Cms extends CI_Controller
                  //Record attributes
                  "name_value_list" => array(
             
-                    array("name" => "last_name", "value" => $this->input->post('nama')),
+                    array("name" => "last_name", "value" => ucwords(strtolower($title = $this->input->post('nama')))),
                     array("name" => "phone_mobile", "value" => $this->input->post('telefon')),
                     array("name" => "email1", "value" => $this->input->post('email')),
                     array("name" => "primary_address_city", "value" => $this->input->post('bandar')),
-
+                    array("name" => "assigned_user_id", "value" => $assigned_to),
                  ),
             );
 
@@ -434,7 +435,23 @@ class Cms extends CI_Controller
 
             //create opportunities ------------------------------------ 
 
-            $oppor_name = "Refinance " . $this->input->post('nama') . " - " . $this->input->post('bandar');
+            $oppor_name = "Refinance - " . ucwords(strtolower($title = $this->input->post('nama'))) . " - " . ucwords(strtolower($title = $this->input->post('bandar')));
+
+            
+            ////
+            ////
+            $description = "Objektif : " . $this->refinance_model->get_refinance_objective($title = $this->input->post('objektif'));
+            $description .= "\nInfo Hartanah : " . $this->input->post('prop_info');
+            $description .= "\n\nLuas : " . $this->input->post('luas');
+            $description .= "\nMarket Value : RM " . number_format($title = $this->input->post('market_value'), 2, '.', ',');
+            $description .= "\nBank : " . ucwords(strtolower($title = $this->input->post('bank')));
+            $description .= "\nBaki Loan : RM " . number_format($title = $this->input->post('baki_loan'), 2, '.', ',');
+            $description .= "\nJenis Pendapatan : " . $this->refinance_model->get_jenis_pendapatan($title = $this->input->post('jenis_pendapatan'));
+            $description .= "\nPendapatan Bulanan : RM " . number_format($title = $this->input->post('pendapatan'), 2, '.', ',');
+            $description .= "\nBayaran Bulanan Rumah : RM " . number_format($title = $this->input->post('bulanan_rumah'), 2, '.', ',');
+            $description .= "\nKomitmen Bulanan : RM " . number_format($title = $this->input->post('bulanan_loan_lain'), 2, '.', ',');
+            $description .= "\nNota : " . $this->input->post('nota');
+
             $expected_close_date = date("Y-m-d H:i:s");
             $stages = "Prospecting";
             $probabilitiy = "10";
@@ -459,7 +476,8 @@ class Cms extends CI_Controller
                     array("name" => "sales_stage", "value" => $stages),
                     array("name" => "probabilitiy", "value" => $probabilitiy),
                     array("name" => "date_closed", "value" => $expected_close_date),
-
+                    array("name" => "assigned_user_id", "value" => $assigned_to),
+                    array("name" => "description", "value" => $description),
                  ),
             );
 
